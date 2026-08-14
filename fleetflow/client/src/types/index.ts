@@ -182,3 +182,38 @@ export interface VehicleLocation {
   eta: string;
   heading: number;
 }
+
+export interface AnalyticsData {
+  fleetUtilization: number;
+  onTimeRate: number;
+  optimization: {
+    totalOriginalDistance: number;
+    totalOptimizedDistance: number;
+    distanceSaved: number;
+    distanceSavedPercent: number;
+    totalOriginalDuration: number;
+    totalOptimizedDuration: number;
+    timeSaved: number;
+    timeSavedPercent: number;
+    routesOptimized: number;
+  };
+  shipments: {
+    total: number;
+    delivered: number;
+    delayed: number;
+    pending: number;
+    cancelled: number;
+  };
+  vehicles: {
+    total: number;
+    available: number;
+    inTransit: number;
+    maintenance: number;
+  };
+  charts: {
+    statusDistribution: { name: string; value: number; color: string }[];
+    vehicleUtilization: { name: string; value: number; color: string }[];
+    dailyVolume: { date: string; shipments: number }[];
+    priorityDistribution: { name: string; value: number }[];
+  };
+}
