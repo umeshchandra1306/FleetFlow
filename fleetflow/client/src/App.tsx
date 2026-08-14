@@ -18,6 +18,7 @@ import RouteDetailPage from './pages/RouteDetailPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import AlertsPage from './pages/AlertsPage';
 import DriverDashboardPage from './pages/DriverDashboardPage';
+import SettingsPage from './pages/SettingsPage';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
@@ -52,7 +53,7 @@ export default function App() {
         <Route path="analytics" element={<AnalyticsPage />} />
         <Route path="alerts" element={<AlertsPage />} />
         <Route path="driver-dashboard" element={<DriverDashboardPage />} />
-        <Route path="settings" element={<div className="p-6"><h1 className="text-2xl font-bold text-gray-900">Settings</h1><p className="text-gray-500 mt-2">Application settings coming soon.</p></div>} />
+        <Route path="settings" element={<SettingsPage />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/dashboard" replace />} />

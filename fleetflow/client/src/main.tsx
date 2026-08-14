@@ -5,6 +5,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './hooks/useAuth';
 import App from './App';
 import './index.css';
+import { initTheme } from './utils/theme';
+
+// Initialize global theme from localStorage / system preference
+initTheme();
 
 const queryClient = new QueryClient({
   defaultOptions: {
