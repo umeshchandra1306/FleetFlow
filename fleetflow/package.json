@@ -1,0 +1,18 @@
+{
+  "name": "fleetflow",
+  "version": "1.0.0",
+  "description": "FleetFlow — Smart Fleet Coordination & Logistics Management Platform",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -n server,client -c blue,green \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install",
+    "db:migrate": "cd server && npx prisma migrate dev --name init",
+    "db:seed": "cd server && npx prisma db seed",
+    "db:setup": "npm run db:migrate && npm run db:seed",
+    "setup": "npm run install:all && npm run db:setup",
+    "build": "cd client && npm run build"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

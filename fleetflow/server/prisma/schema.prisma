@@ -1,0 +1,195 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  DISPATCHER
+  DRIVER
+}
+
+enum VehicleStatus {
+  AVAILABLE
+  ASSIGNED
+  IN_TRANSIT
+  IDLE
+  MAINTENANCE
+  OFFLINE
+}
+
+enum DriverStatus {
+  AVAILABLE
+  DRIVING
+  OFFLINE
+  ON_BREAK
+}
+
+enum ShipmentStatus {
+  PENDING
+  ASSIGNED
+  PICKED_UP
+  IN_TRANSIT
+  DELAYED
+  ARRIVING
+  DELIVERED
+  CANCELLED
+}
+
+enum ShipmentPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum RouteStatus {
+  PLANNED
+  ACTIVE
+  COMPLETED
+  DEVIATED
+}
+
+enum AlertType {
+  ROUTE_DEVIATION
+  DELAY_RISK
+  LOW_PROGRESS
+  VEHICLE_OFFLINE
+}
+
+enum AlertSeverity {
+  INFO
+  WARNING
+  CRITICAL
+}
+
+model User {
+  id            String        @id @default(uuid())
+  email         String        @unique
+  password      String
+  name          String
+  role          UserRole      @default(DISPATCHER)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  driver        Driver?
+  notifications Notification[]
+}
+
+model Driver {
+  id              String       @id @default(uuid())
+  name            String
+  phone           String
+  licenseNumber   String       @unique
+  status          DriverStatus @default(AVAILABLE)
+  rating          Float        @default(4.5)
+  tripsCompleted  Int          @default(0)
+  userId          String?      @unique
+  user            User?        @relation(fields: [userId], references: [id])
+  vehicle         Vehicle?
+  shipments       Shipment[]
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+}
+
+model Vehicle {
+  id             String        @id @default(uuid())
+  vehicleNumber  String        @unique
+  vehicleType    String
+  capacity       Float
+  currentLoad    Float         @default(0)
+  status         VehicleStatus @default(AVAILABLE)
+  latitude       Float         @default(28.6139)
+  longitude      Float         @default(77.2090)
+  fuelType       String        @default("Diesel")
+  driverId       String?       @unique
+  driver         Driver?       @relation(fields: [driverId], references: [id])
+  shipments      Shipment[]
+  routes         Route[]
+  trackingEvents TrackingEvent[]
+  alerts         Alert[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+model Shipment {
+  id                   String           @id @default(uuid())
+  shipmentNumber       String           @unique
+  pickupLocation       String
+  destination          String
+  pickupLatitude       Float
+  pickupLongitude      Float
+  destinationLatitude  Float
+  destinationLongitude Float
+  cargoType            String
+  weight               Float
+  packageCount         Int
+  priority             ShipmentPriority @default(MEDIUM)
+  deadline             DateTime
+  status               ShipmentStatus   @default(PENDING)
+  vehicleId            String?
+  vehicle              Vehicle?         @relation(fields: [vehicleId], references: [id])
+  driverId             String?
+  driver               Driver?          @relation(fields: [driverId], references: [id])
+  routeId              String?          @unique
+  route                Route?           @relation(fields: [routeId], references: [id])
+  trackingEvents       TrackingEvent[]
+  alerts               Alert[]
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+}
+
+model Route {
+  id                String      @id @default(uuid())
+  shipment          Shipment?
+  vehicleId         String?
+  vehicle           Vehicle?    @relation(fields: [vehicleId], references: [id])
+  distance          Float
+  estimatedDuration Float
+  optimizedDistance  Float?
+  optimizedDuration Float?
+  eta               DateTime?
+  status            RouteStatus @default(PLANNED)
+  routePoints       Json        @default("[]")
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+model TrackingEvent {
+  id         String   @id @default(uuid())
+  vehicleId  String
+  vehicle    Vehicle  @relation(fields: [vehicleId], references: [id])
+  shipmentId String?
+  shipment   Shipment? @relation(fields: [shipmentId], references: [id])
+  latitude   Float
+  longitude  Float
+  speed      Float    @default(0)
+  timestamp  DateTime @default(now())
+}
+
+model Alert {
+  id         String        @id @default(uuid())
+  vehicleId  String?
+  vehicle    Vehicle?      @relation(fields: [vehicleId], references: [id])
+  shipmentId String?
+  shipment   Shipment?     @relation(fields: [shipmentId], references: [id])
+  type       AlertType
+  severity   AlertSeverity @default(INFO)
+  message    String
+  resolved   Boolean       @default(false)
+  createdAt  DateTime      @default(now())
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  title     String
+  message   String
+  type      String   @default("info")
+  read      Boolean  @default(false)
+  metadata  Json?
+  createdAt DateTime @default(now())
+}
