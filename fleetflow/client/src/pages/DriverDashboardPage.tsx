@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
 import { shipmentAPI } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import { useVehicleTracking, useShipmentStatus } from '../hooks/useSocket';
@@ -32,8 +33,16 @@ export default function DriverDashboardPage() {
     queryKey: ['driver-active-shipment', driverId],
     queryFn: async () => {
       if (!driverId) return null;
-      const res = await shipmentAPI.getDriverActive(driverId);
-      return (res.data.data ?? null) as Shipment | null;
+      try {
+        const res = await shipmentAPI.getDriverActive(driverId);
+        return (res.data.data ?? null) as Shipment | null;
+      } catch (err) {
+        // Backend returns 404 when no active shipment exists — treat as "no data"
+        if (axios.isAxiosError(err) && err.response?.status === 404) {
+          return null;
+        }
+        throw err;
+      }
     },
     enabled: !!driverId,
     refetchInterval: 30000,
