@@ -139,7 +139,7 @@ export default function AllocateVehiclePage() {
               </div>
 
               <div className="mt-4 flex flex-wrap gap-2">
-                {recommended.reasons.map((r, i) => (
+                {recommended.reasons.map((r: string, i: number) => (
                   <span key={i} className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs font-medium">
                     <CheckCircle className="w-3 h-3" /> {r}
                   </span>
@@ -154,7 +154,7 @@ export default function AllocateVehiclePage() {
           <div className="lg:col-span-3">
             <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Alternative Vehicles</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-              {alternatives.map(v => (
+              {alternatives.map((v: AllocationScore) => (
                 <div
                   key={v.vehicleId}
                   onClick={() => setSelectedVehicle(v)}
@@ -182,7 +182,7 @@ export default function AllocateVehiclePage() {
           <div className="lg:col-span-3">
             <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Unavailable Vehicles</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-2">
-              {disqualified.map(v => (
+              {disqualified.map((v: AllocationScore) => (
                 <div key={v.vehicleId} className="bg-gray-50 rounded-lg p-3 opacity-60">
                   <div className="flex items-center gap-2">
                     <XCircle className="w-4 h-4 text-red-400" />
