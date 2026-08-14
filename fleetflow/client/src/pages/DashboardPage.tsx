@@ -51,13 +51,13 @@ export default function DashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="p-6 space-y-6">
+      <div className="p-5 lg:p-8 space-y-6">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="shimmer h-24 rounded-xl" />
+            <div key={i} className="shimmer h-28 rounded-xl" />
           ))}
         </div>
-        <div className="shimmer h-96 rounded-xl" />
+        <div className="shimmer h-[440px] rounded-xl" />
       </div>
     );
   }
@@ -68,42 +68,42 @@ export default function DashboardPage() {
   const vehicles = data?.vehicles || [];
 
   const kpiCards = [
-    { label: 'Active Vehicles', value: kpis?.activeVehicles || 0, icon: Truck, color: 'bg-blue-500', change: `${kpis?.totalVehicles || 0} total` },
-    { label: 'Available', value: kpis?.availableVehicles || 0, icon: CheckCircle, color: 'bg-emerald-500', change: 'Ready to dispatch' },
-    { label: 'Active Shipments', value: kpis?.activeShipments || 0, icon: Package, color: 'bg-indigo-500', change: `${kpis?.pendingShipments || 0} pending` },
-    { label: 'Delayed', value: kpis?.delayedShipments || 0, icon: AlertTriangle, color: 'bg-red-500', change: 'Needs attention' },
-    { label: 'Fleet Utilization', value: `${kpis?.fleetUtilization || 0}%`, icon: Activity, color: 'bg-purple-500', change: 'Efficiency' },
-    { label: 'On-Time Rate', value: `${kpis?.onTimeRate || 0}%`, icon: TrendingUp, color: 'bg-teal-500', change: 'Performance' },
+    { label: 'Active Vehicles', value: kpis?.activeVehicles || 0, icon: Truck, bg: 'from-blue-500 to-blue-600', light: 'bg-blue-50 text-blue-600', change: `${kpis?.totalVehicles || 0} total` },
+    { label: 'Available', value: kpis?.availableVehicles || 0, icon: CheckCircle, bg: 'from-emerald-500 to-emerald-600', light: 'bg-emerald-50 text-emerald-600', change: 'Ready to dispatch' },
+    { label: 'Active Shipments', value: kpis?.activeShipments || 0, icon: Package, bg: 'from-indigo-500 to-indigo-600', light: 'bg-indigo-50 text-indigo-600', change: `${kpis?.pendingShipments || 0} pending` },
+    { label: 'Delayed', value: kpis?.delayedShipments || 0, icon: AlertTriangle, bg: 'from-red-500 to-red-600', light: 'bg-red-50 text-red-600', change: 'Needs attention', alert: true },
+    { label: 'Fleet Utilization', value: `${kpis?.fleetUtilization || 0}%`, icon: Activity, bg: 'from-violet-500 to-violet-600', light: 'bg-violet-50 text-violet-600', change: 'Efficiency' },
+    { label: 'On-Time Rate', value: `${kpis?.onTimeRate || 0}%`, icon: TrendingUp, bg: 'from-teal-500 to-teal-600', light: 'bg-teal-50 text-teal-600', change: 'Performance' },
   ];
 
   const statusColors: Record<string, string> = {
-    PENDING: 'bg-gray-100 text-gray-700',
-    ASSIGNED: 'bg-amber-100 text-amber-700',
-    IN_TRANSIT: 'bg-blue-100 text-blue-700',
-    DELAYED: 'bg-red-100 text-red-700',
-    DELIVERED: 'bg-emerald-100 text-emerald-700',
-    PICKED_UP: 'bg-cyan-100 text-cyan-700',
-    ARRIVING: 'bg-violet-100 text-violet-700',
+    PENDING: 'bg-gray-100 text-gray-600',
+    ASSIGNED: 'bg-amber-50 text-amber-700',
+    IN_TRANSIT: 'bg-blue-50 text-blue-700',
+    DELAYED: 'bg-red-50 text-red-700',
+    DELIVERED: 'bg-emerald-50 text-emerald-700',
+    PICKED_UP: 'bg-cyan-50 text-cyan-700',
+    ARRIVING: 'bg-violet-50 text-violet-700',
   };
 
   const priorityColors: Record<string, string> = {
     LOW: 'bg-gray-100 text-gray-600',
-    MEDIUM: 'bg-blue-100 text-blue-700',
-    HIGH: 'bg-orange-100 text-orange-700',
-    URGENT: 'bg-red-100 text-red-700',
+    MEDIUM: 'bg-blue-50 text-blue-700',
+    HIGH: 'bg-orange-50 text-orange-700',
+    URGENT: 'bg-red-50 text-red-700',
   };
 
   return (
-    <div className="p-4 lg:p-6 space-y-6">
+    <div className="p-5 lg:p-8 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Fleet Command Center</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Real-time fleet operations overview</p>
+          <h1 className="page-header-title">Fleet Command Center</h1>
+          <p className="page-header-subtitle">Real-time fleet operations overview</p>
         </div>
         <button
           onClick={() => navigate('/shipments/new')}
-          className="hidden sm:flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors shadow-sm"
+          className="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl text-sm font-semibold hover:from-primary-700 hover:to-primary-800 transition-all duration-200 shadow-sm hover:shadow-md"
         >
           <Plus className="w-4 h-4" /> New Shipment
         </button>
@@ -112,33 +112,36 @@ export default function DashboardPage() {
       {/* KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {kpiCards.map((kpi, i) => (
-          <div key={i} className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+          <div key={i} className="bg-white rounded-xl p-4 border border-gray-100 shadow-card hover:shadow-card-hover transition-all duration-200 group">
             <div className="flex items-center justify-between mb-3">
-              <div className={`w-10 h-10 ${kpi.color} rounded-lg flex items-center justify-center`}>
-                <kpi.icon className="w-5 h-5 text-white" />
+              <div className={`w-10 h-10 ${kpi.light} rounded-xl flex items-center justify-center transition-transform duration-200 group-hover:scale-105`}>
+                <kpi.icon className="w-5 h-5" />
               </div>
-              {typeof kpi.value === 'number' && kpi.value > 0 && kpi.label === 'Delayed' && (
-                <span className="w-2.5 h-2.5 bg-red-500 rounded-full pulse-dot" />
+              {kpi.alert && typeof kpi.value === 'number' && kpi.value > 0 && (
+                <span className="w-2 h-2 bg-red-500 rounded-full pulse-dot" />
               )}
             </div>
-            <p className="text-2xl font-bold text-gray-900">{kpi.value}</p>
-            <p className="text-xs text-gray-500 mt-0.5">{kpi.label}</p>
+            <p className="text-2xl font-bold text-gray-900 tracking-tight">{kpi.value}</p>
+            <p className="text-[11px] text-gray-500 mt-0.5 font-medium">{kpi.label}</p>
+            <p className="text-[10px] text-gray-400 mt-0.5">{kpi.change}</p>
           </div>
         ))}
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Map */}
-        <div className="lg:col-span-2 bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="lg:col-span-2 bg-white rounded-xl border border-gray-100 shadow-card overflow-hidden">
           <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-primary-500" />
-              <h2 className="font-semibold text-gray-900">Live Fleet Map</h2>
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 bg-primary-50 rounded-lg flex items-center justify-center">
+                <MapPin className="w-3.5 h-3.5 text-primary-600" />
+              </div>
+              <h2 className="font-semibold text-gray-900 text-[15px]">Live Fleet Map</h2>
               <span className="w-2 h-2 bg-green-500 rounded-full pulse-dot" />
             </div>
-            <span className="text-xs text-gray-400">{vehicles.length} vehicles tracked</span>
+            <span className="text-xs text-gray-400 font-medium">{vehicles.length} vehicles tracked</span>
           </div>
-          <div className="h-[400px]">
+          <div className="h-[420px]">
             <MapContainer
               center={[22.5, 78.5]}
               zoom={5}
@@ -186,29 +189,38 @@ export default function DashboardPage() {
         </div>
 
         {/* Alerts Panel */}
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm">
-          <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-amber-500" />
-              <h2 className="font-semibold text-gray-900">Active Alerts</h2>
+        <div className="bg-white rounded-xl border border-gray-100 shadow-card flex flex-col">
+          <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between flex-shrink-0">
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 bg-amber-50 rounded-lg flex items-center justify-center">
+                <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
+              </div>
+              <h2 className="font-semibold text-gray-900 text-[15px]">Active Alerts</h2>
+              {alerts.length > 0 && (
+                <span className="text-[10px] font-bold bg-red-50 text-red-600 px-1.5 py-0.5 rounded-full">{alerts.length}</span>
+              )}
             </div>
-            <button onClick={() => navigate('/alerts')} className="text-xs text-primary-600 hover:text-primary-700 font-medium">View all</button>
+            <button onClick={() => navigate('/alerts')} className="text-xs text-primary-600 hover:text-primary-700 font-semibold transition-colors">View all</button>
           </div>
-          <div className="divide-y divide-gray-50 max-h-[360px] overflow-y-auto">
+          <div className="divide-y divide-gray-50 flex-1 overflow-y-auto max-h-[380px]">
             {alerts.length === 0 ? (
-              <p className="p-6 text-center text-sm text-gray-400">No active alerts</p>
+              <div className="p-8 text-center">
+                <CheckCircle className="w-8 h-8 text-emerald-300 mx-auto mb-2" />
+                <p className="text-sm text-gray-400 font-medium">No active alerts</p>
+                <p className="text-xs text-gray-300 mt-0.5">All systems operating normally</p>
+              </div>
             ) : (
               alerts.slice(0, 6).map(alert => (
-                <div key={alert.id} className="px-5 py-3">
-                  <div className="flex items-start gap-2">
+                <div key={alert.id} className="px-5 py-3.5 hover:bg-gray-50/50 transition-colors">
+                  <div className="flex items-start gap-2.5">
                     <span className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${
                       alert.severity === 'CRITICAL' ? 'bg-red-500' : alert.severity === 'WARNING' ? 'bg-amber-500' : 'bg-blue-500'
                     }`} />
                     <div>
-                      <p className="text-sm text-gray-800">{alert.message}</p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${
-                          alert.severity === 'CRITICAL' ? 'bg-red-100 text-red-700' : alert.severity === 'WARNING' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'
+                      <p className="text-[13px] text-gray-800 leading-snug">{alert.message}</p>
+                      <div className="flex items-center gap-2 mt-1.5">
+                        <span className={`ff-badge ${
+                          alert.severity === 'CRITICAL' ? 'bg-red-50 text-red-600' : alert.severity === 'WARNING' ? 'bg-amber-50 text-amber-600' : 'bg-blue-50 text-blue-600'
                         }`}>{alert.severity}</span>
                         <span className="text-[10px] text-gray-400">{new Date(alert.createdAt).toLocaleTimeString()}</span>
                       </div>
@@ -222,62 +234,70 @@ export default function DashboardPage() {
       </div>
 
       {/* Active Shipments Table */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm">
+      <div className="bg-white rounded-xl border border-gray-100 shadow-card">
         <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Package className="w-4 h-4 text-primary-500" />
-            <h2 className="font-semibold text-gray-900">Active Shipments</h2>
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 bg-primary-50 rounded-lg flex items-center justify-center">
+              <Package className="w-3.5 h-3.5 text-primary-600" />
+            </div>
+            <h2 className="font-semibold text-gray-900 text-[15px]">Active Shipments</h2>
+            {activeShipments.length > 0 && (
+              <span className="text-[10px] font-bold bg-primary-50 text-primary-600 px-1.5 py-0.5 rounded-full">{activeShipments.length}</span>
+            )}
           </div>
-          <button onClick={() => navigate('/shipments')} className="text-xs text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1">
+          <button onClick={() => navigate('/shipments')} className="text-xs text-primary-600 hover:text-primary-700 font-semibold flex items-center gap-1 transition-colors">
             View all <ArrowRight className="w-3 h-3" />
           </button>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="text-left text-xs text-gray-500 uppercase tracking-wider border-b border-gray-100">
-                <th className="px-5 py-3 font-medium">Shipment</th>
-                <th className="px-5 py-3 font-medium">Route</th>
-                <th className="px-5 py-3 font-medium">Vehicle</th>
-                <th className="px-5 py-3 font-medium">Status</th>
-                <th className="px-5 py-3 font-medium">ETA</th>
-                <th className="px-5 py-3 font-medium">Priority</th>
-                <th className="px-5 py-3 font-medium"></th>
+              <tr className="text-left text-[11px] text-gray-400 uppercase tracking-wider border-b border-gray-100">
+                <th className="px-5 py-3 font-semibold">Shipment</th>
+                <th className="px-5 py-3 font-semibold">Route</th>
+                <th className="px-5 py-3 font-semibold">Vehicle</th>
+                <th className="px-5 py-3 font-semibold">Status</th>
+                <th className="px-5 py-3 font-semibold">ETA</th>
+                <th className="px-5 py-3 font-semibold">Priority</th>
+                <th className="px-5 py-3 font-semibold"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
               {activeShipments.length === 0 ? (
-                <tr><td colSpan={7} className="px-5 py-8 text-center text-sm text-gray-400">No active shipments</td></tr>
+                <tr><td colSpan={7} className="px-5 py-10 text-center">
+                  <Package className="w-8 h-8 text-gray-200 mx-auto mb-2" />
+                  <p className="text-sm text-gray-400 font-medium">No active shipments</p>
+                </td></tr>
               ) : (
                 activeShipments.map(s => (
-                  <tr key={s.id} className="hover:bg-gray-50/50 transition-colors cursor-pointer" onClick={() => navigate(`/shipments/${s.id}`)}>
-                    <td className="px-5 py-3">
+                  <tr key={s.id} className="ff-table-row cursor-pointer group" onClick={() => navigate(`/shipments/${s.id}`)}>
+                    <td className="px-5 py-3.5">
                       <p className="text-sm font-semibold text-gray-900">{s.shipmentNumber}</p>
-                      <p className="text-xs text-gray-500">{s.cargoType}</p>
+                      <p className="text-[11px] text-gray-400 mt-0.5">{s.cargoType}</p>
                     </td>
-                    <td className="px-5 py-3">
+                    <td className="px-5 py-3.5">
                       <p className="text-sm text-gray-700">{s.pickupLocation?.split(',')[0]}</p>
-                      <p className="text-xs text-gray-500">→ {s.destination?.split(',')[0]}</p>
+                      <p className="text-[11px] text-gray-400 mt-0.5">→ {s.destination?.split(',')[0]}</p>
                     </td>
-                    <td className="px-5 py-3">
+                    <td className="px-5 py-3.5">
                       <p className="text-sm text-gray-700">{s.vehicle?.vehicleNumber || '—'}</p>
-                      <p className="text-xs text-gray-500">{s.driver?.name || ''}</p>
+                      <p className="text-[11px] text-gray-400 mt-0.5">{s.driver?.name || ''}</p>
                     </td>
-                    <td className="px-5 py-3">
-                      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${statusColors[s.status] || 'bg-gray-100 text-gray-700'}`}>
+                    <td className="px-5 py-3.5">
+                      <span className={`ff-badge ${statusColors[s.status] || 'bg-gray-100 text-gray-600'}`}>
                         {s.status.replace('_', ' ')}
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-sm text-gray-600">
+                    <td className="px-5 py-3.5 text-sm text-gray-600">
                       {s.route?.eta ? new Date(s.route.eta).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—'}
                     </td>
-                    <td className="px-5 py-3">
-                      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${priorityColors[s.priority]}`}>
+                    <td className="px-5 py-3.5">
+                      <span className={`ff-badge ${priorityColors[s.priority]}`}>
                         {s.priority}
                       </span>
                     </td>
-                    <td className="px-5 py-3">
-                      <ArrowRight className="w-4 h-4 text-gray-300" />
+                    <td className="px-5 py-3.5">
+                      <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-gray-500 transition-colors" />
                     </td>
                   </tr>
                 ))

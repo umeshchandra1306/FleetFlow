@@ -102,50 +102,50 @@ export default function AppLayout() {
   const currentNavItems = isDriver ? driverNavItems : navItems;
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-surface-secondary overflow-hidden">
       {/* Sidebar - Desktop */}
       <aside className={`hidden lg:flex flex-col transition-sidebar bg-sidebar-bg ${sidebarOpen ? 'w-64' : 'w-20'}`}>
         {/* Logo */}
-        <div className="flex items-center gap-3 px-5 py-5 border-b border-white/10">
-          <div className="w-9 h-9 bg-primary-500 rounded-lg flex items-center justify-center flex-shrink-0">
+        <div className="flex items-center gap-3 px-5 h-16 border-b border-white/[0.07] flex-shrink-0">
+          <div className="w-9 h-9 bg-gradient-to-br from-primary-400 to-primary-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary-500/20">
             <Zap className="w-5 h-5 text-white" />
           </div>
           {sidebarOpen && (
             <div>
-              <h1 className="text-white font-bold text-lg leading-tight">FleetFlow</h1>
-              <p className="text-sidebar-text text-[10px] uppercase tracking-wider">Fleet Command</p>
+              <h1 className="text-white font-bold text-lg leading-tight tracking-tight">FleetFlow</h1>
+              <p className="text-sidebar-text text-[10px] uppercase tracking-[0.15em] font-medium">Fleet Command</p>
             </div>
           )}
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
+        <nav className="flex-1 py-5 px-3 space-y-0.5 overflow-y-auto">
           {currentNavItems.map(item => (
             <NavLink
               key={item.to}
               to={item.to}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${
+                `flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group ${
                   isActive
-                    ? 'bg-primary-600/90 text-white shadow-lg shadow-primary-600/20'
-                    : 'text-sidebar-text hover:bg-sidebar-hover hover:text-white'
+                    ? 'bg-white/[0.12] text-white shadow-sm'
+                    : 'text-sidebar-text hover:bg-white/[0.06] hover:text-white'
                 }`
               }
             >
-              <item.icon className="w-5 h-5 flex-shrink-0" />
-              {sidebarOpen && <span className="text-sm font-medium">{item.label}</span>}
+              <item.icon className="w-[18px] h-[18px] flex-shrink-0" />
+              {sidebarOpen && <span className="text-[13px] font-medium tracking-wide">{item.label}</span>}
             </NavLink>
           ))}
         </nav>
 
         {/* Collapse button */}
-        <div className="px-3 py-4 border-t border-white/10">
+        <div className="px-3 py-4 border-t border-white/[0.07]">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sidebar-text hover:bg-sidebar-hover hover:text-white transition-colors w-full"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sidebar-text hover:bg-white/[0.06] hover:text-white transition-colors w-full"
           >
-            <Menu className="w-5 h-5 flex-shrink-0" />
-            {sidebarOpen && <span className="text-sm">Collapse</span>}
+            <Menu className="w-[18px] h-[18px] flex-shrink-0" />
+            {sidebarOpen && <span className="text-[13px]">Collapse</span>}
           </button>
         </div>
       </aside>
@@ -153,33 +153,33 @@ export default function AppLayout() {
       {/* Mobile Sidebar */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="fixed inset-0 bg-black/50" onClick={() => setMobileMenuOpen(false)} />
-          <aside className="fixed left-0 top-0 bottom-0 w-64 bg-sidebar-bg z-50 flex flex-col">
-            <div className="flex items-center justify-between px-5 py-5 border-b border-white/10">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
+          <aside className="fixed left-0 top-0 bottom-0 w-72 bg-sidebar-bg z-50 flex flex-col shadow-2xl">
+            <div className="flex items-center justify-between px-5 h-16 border-b border-white/[0.07]">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-primary-500 rounded-lg flex items-center justify-center">
+                <div className="w-9 h-9 bg-gradient-to-br from-primary-400 to-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20">
                   <Zap className="w-5 h-5 text-white" />
                 </div>
-                <h1 className="text-white font-bold text-lg">FleetFlow</h1>
+                <h1 className="text-white font-bold text-lg tracking-tight">FleetFlow</h1>
               </div>
-              <button onClick={() => setMobileMenuOpen(false)} className="text-sidebar-text hover:text-white">
+              <button onClick={() => setMobileMenuOpen(false)} className="text-sidebar-text hover:text-white transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <nav className="flex-1 py-4 px-3 space-y-1">
+            <nav className="flex-1 py-5 px-3 space-y-0.5">
               {currentNavItems.map(item => (
                 <NavLink
                   key={item.to}
                   to={item.to}
                   onClick={() => setMobileMenuOpen(false)}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                      isActive ? 'bg-primary-600/90 text-white' : 'text-sidebar-text hover:bg-sidebar-hover hover:text-white'
+                    `flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
+                      isActive ? 'bg-white/[0.12] text-white' : 'text-sidebar-text hover:bg-white/[0.06] hover:text-white'
                     }`
                   }
                 >
-                  <item.icon className="w-5 h-5" />
-                  <span className="text-sm font-medium">{item.label}</span>
+                  <item.icon className="w-[18px] h-[18px]" />
+                  <span className="text-[13px] font-medium">{item.label}</span>
                 </NavLink>
               ))}
             </nav>
@@ -190,10 +190,10 @@ export default function AppLayout() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top Bar */}
-        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 lg:px-6 flex-shrink-0">
+        <header className="h-16 bg-white/80 backdrop-blur-md border-b border-gray-200/60 flex items-center justify-between px-4 lg:px-6 flex-shrink-0 shadow-topbar sticky top-0 z-30">
           <div className="flex items-center gap-4">
-            <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden text-gray-500 hover:text-gray-700">
-              <Menu className="w-6 h-6" />
+            <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden text-gray-400 hover:text-gray-600 transition-colors">
+              <Menu className="w-5 h-5" />
             </button>
 
             {/* Search */}
@@ -205,17 +205,17 @@ export default function AppLayout() {
                 value={searchQuery}
                 onChange={(e) => { setSearchQuery(e.target.value); setShowSearch(true); }}
                 onFocus={() => setShowSearch(true)}
-                className="w-72 lg:w-96 pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                className="w-72 lg:w-96 pl-10 pr-4 py-2 bg-gray-50/80 border border-gray-200/80 rounded-xl text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500/15 focus:border-primary-400 focus:bg-white transition-all duration-200"
               />
               {showSearch && searchResults.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-xl border border-gray-200 z-50 max-h-80 overflow-y-auto">
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-dropdown border border-gray-100 z-50 max-h-80 overflow-y-auto">
                   {searchResults.map(r => (
                     <button
                       key={`${r.type}-${r.id}`}
                       onClick={() => handleSearchClick(r)}
-                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors text-left border-b border-gray-100 last:border-0"
+                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors text-left border-b border-gray-50 last:border-0"
                     >
-                      <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-primary-100 text-primary-700">
+                      <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-md bg-primary-50 text-primary-600 tracking-wide">
                         {r.type}
                       </span>
                       <div>
@@ -229,39 +229,39 @@ export default function AppLayout() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             {/* Notifications */}
             <div className="relative" onClick={(e) => e.stopPropagation()}>
               <button
                 onClick={() => { setShowNotifications(!showNotifications); setShowUserMenu(false); }}
-                className="relative p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                className="relative p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100/80 rounded-xl transition-all duration-200"
               >
-                <Bell className="w-5 h-5" />
+                <Bell className="w-[18px] h-[18px]" />
                 {unreadCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                  <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1 shadow-sm">
                     {unreadCount > 9 ? '9+' : unreadCount}
                   </span>
                 )}
               </button>
 
               {showNotifications && (
-                <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-200 z-50 max-h-96 overflow-y-auto">
+                <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-dropdown border border-gray-100 z-50 max-h-96 overflow-y-auto">
                   <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-                    <h3 className="font-semibold text-gray-900">Notifications</h3>
+                    <h3 className="font-semibold text-gray-900 text-sm">Notifications</h3>
                     {unreadCount > 0 && (
                       <button
                         onClick={async () => { await notificationAPI.markAllRead(); refetchNotifs(); }}
-                        className="text-xs text-primary-600 hover:text-primary-700 font-medium"
+                        className="text-xs text-primary-600 hover:text-primary-700 font-medium transition-colors"
                       >
                         Mark all read
                       </button>
                     )}
                   </div>
                   {notifications.length === 0 ? (
-                    <p className="px-4 py-8 text-center text-sm text-gray-500">No notifications</p>
+                    <p className="px-4 py-8 text-center text-sm text-gray-400">No notifications</p>
                   ) : (
                     notifications.slice(0, 10).map((n: any) => (
-                      <div key={n.id} className={`px-4 py-3 border-b border-gray-50 ${!n.read ? 'bg-primary-50/50' : ''}`}>
+                      <div key={n.id} className={`px-4 py-3 border-b border-gray-50 transition-colors ${!n.read ? 'bg-primary-50/40' : 'hover:bg-gray-50'}`}>
                         <p className="text-sm font-medium text-gray-900">{n.title}</p>
                         <p className="text-xs text-gray-500 mt-0.5">{n.message}</p>
                         <p className="text-[10px] text-gray-400 mt-1">{new Date(n.createdAt).toLocaleString()}</p>
@@ -272,27 +272,30 @@ export default function AppLayout() {
               )}
             </div>
 
+            {/* Divider */}
+            <div className="w-px h-6 bg-gray-200 hidden md:block" />
+
             {/* User Menu */}
             <div className="relative" onClick={(e) => e.stopPropagation()}>
               <button
                 onClick={() => { setShowUserMenu(!showUserMenu); setShowNotifications(false); }}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+                className="flex items-center gap-2.5 px-2 py-1.5 rounded-xl hover:bg-gray-100/80 transition-all duration-200"
               >
-                <div className="w-8 h-8 bg-primary-100 text-primary-700 rounded-full flex items-center justify-center text-sm font-bold">
+                <div className="w-8 h-8 bg-gradient-to-br from-primary-100 to-primary-200 text-primary-700 rounded-xl flex items-center justify-center text-sm font-bold">
                   {user?.name?.charAt(0) || 'U'}
                 </div>
                 <div className="hidden md:block text-left">
-                  <p className="text-sm font-medium text-gray-700">{user?.name}</p>
-                  <p className="text-[10px] text-gray-500 uppercase">{user?.role}</p>
+                  <p className="text-sm font-medium text-gray-700 leading-tight">{user?.name}</p>
+                  <p className="text-[10px] text-gray-400 uppercase tracking-wider font-medium">{user?.role}</p>
                 </div>
-                <ChevronDown className="w-4 h-4 text-gray-400 hidden md:block" />
+                <ChevronDown className="w-3.5 h-3.5 text-gray-400 hidden md:block" />
               </button>
 
               {showUserMenu && (
-                <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-200 z-50 py-1">
+                <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-dropdown border border-gray-100 z-50 py-1.5">
                   <button
                     onClick={() => { navigate('/settings'); setShowUserMenu(false); }}
-                    className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
+                    className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
                   >
                     <Settings className="w-4 h-4" />
                     Settings
@@ -300,7 +303,7 @@ export default function AppLayout() {
                   <hr className="my-1 border-gray-100" />
                   <button
                     onClick={() => { logout(); navigate('/login'); }}
-                    className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50"
+                    className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
                   >
                     <LogOut className="w-4 h-4" />
                     Logout
@@ -320,7 +323,7 @@ export default function AppLayout() {
       {/* Toast Notifications */}
       <div className="fixed bottom-4 right-4 z-[100] space-y-2">
         {toasts.map(toast => (
-          <div key={toast.id} className="toast-enter bg-white rounded-xl shadow-2xl border border-gray-200 p-4 max-w-sm flex items-start gap-3">
+          <div key={toast.id} className="toast-enter bg-white rounded-xl shadow-dropdown border border-gray-100 p-4 max-w-sm flex items-start gap-3">
             <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${
               toast.type === 'alert' ? 'bg-red-500' : toast.type === 'delivery' ? 'bg-green-500' : 'bg-primary-500'
             }`} />
@@ -328,7 +331,7 @@ export default function AppLayout() {
               <p className="text-sm font-semibold text-gray-900">{toast.title}</p>
               <p className="text-xs text-gray-500 mt-0.5">{toast.message}</p>
             </div>
-            <button onClick={() => setToasts(prev => prev.filter(t => t.id !== toast.id))} className="text-gray-400 hover:text-gray-600 flex-shrink-0">
+            <button onClick={() => setToasts(prev => prev.filter(t => t.id !== toast.id))} className="text-gray-300 hover:text-gray-500 flex-shrink-0 transition-colors">
               <X className="w-4 h-4" />
             </button>
           </div>

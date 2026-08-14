@@ -24,9 +24,24 @@ export default {
           text: '#94a3b8',
           textActive: '#ffffff',
         },
+        surface: {
+          DEFAULT: '#ffffff',
+          secondary: '#f8f9fb',
+          border: 'rgba(0,0,0,0.06)',
+        },
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+      },
+      boxShadow: {
+        'card': '0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02)',
+        'card-hover': '0 4px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04)',
+        'dropdown': '0 8px 24px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.04)',
+        'topbar': '0 1px 3px rgba(0,0,0,0.05)',
+      },
+      borderRadius: {
+        'xl': '0.875rem',
+        '2xl': '1rem',
       },
     },
   },

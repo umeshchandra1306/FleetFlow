@@ -30,21 +30,21 @@ const PRIORITY_OPTIONS = [
 ] as const;
 
 const statusColors: Record<string, string> = {
-  PENDING: 'bg-gray-100 text-gray-700',
-  ASSIGNED: 'bg-amber-100 text-amber-700',
-  PICKED_UP: 'bg-cyan-100 text-cyan-700',
-  IN_TRANSIT: 'bg-blue-100 text-blue-700',
-  DELAYED: 'bg-red-100 text-red-700',
-  ARRIVING: 'bg-violet-100 text-violet-700',
-  DELIVERED: 'bg-emerald-100 text-emerald-700',
+  PENDING: 'bg-gray-100 text-gray-600',
+  ASSIGNED: 'bg-amber-50 text-amber-700',
+  PICKED_UP: 'bg-cyan-50 text-cyan-700',
+  IN_TRANSIT: 'bg-blue-50 text-blue-700',
+  DELAYED: 'bg-red-50 text-red-700',
+  ARRIVING: 'bg-violet-50 text-violet-700',
+  DELIVERED: 'bg-emerald-50 text-emerald-700',
   CANCELLED: 'bg-gray-200 text-gray-500',
 };
 
 const priorityColors: Record<string, string> = {
   LOW: 'bg-gray-100 text-gray-600',
-  MEDIUM: 'bg-blue-100 text-blue-700',
-  HIGH: 'bg-orange-100 text-orange-700',
-  URGENT: 'bg-red-100 text-red-700',
+  MEDIUM: 'bg-blue-50 text-blue-700',
+  HIGH: 'bg-orange-50 text-orange-700',
+  URGENT: 'bg-red-50 text-red-700',
 };
 
 const priorityDots: Record<string, string> = {
@@ -104,15 +104,15 @@ export default function ShipmentListPage() {
   // --- Loading state ---
   if (isLoading) {
     return (
-      <div className="p-4 lg:p-6 space-y-4">
+      <div className="p-5 lg:p-8 space-y-5">
         <div className="flex items-center justify-between">
           <div>
             <div className="shimmer h-7 w-40 rounded-lg" />
             <div className="shimmer h-4 w-56 rounded-lg mt-2" />
           </div>
-          <div className="shimmer h-10 w-36 rounded-lg" />
+          <div className="shimmer h-10 w-36 rounded-xl" />
         </div>
-        <div className="shimmer h-12 rounded-xl" />
+        <div className="shimmer h-14 rounded-xl" />
         {Array.from({ length: 5 }).map((_, i) => (
           <div key={i} className="shimmer h-20 rounded-xl" />
         ))}
@@ -123,16 +123,18 @@ export default function ShipmentListPage() {
   // --- Error state ---
   if (isError) {
     return (
-      <div className="p-4 lg:p-6">
-        <div className="bg-white rounded-xl border border-red-200 shadow-sm p-8 text-center">
-          <AlertTriangle className="w-10 h-10 text-red-400 mx-auto mb-3" />
+      <div className="p-5 lg:p-8">
+        <div className="bg-white rounded-xl border border-red-100 shadow-card p-10 text-center">
+          <div className="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center mx-auto mb-3">
+            <AlertTriangle className="w-6 h-6 text-red-400" />
+          </div>
           <h2 className="text-lg font-semibold text-gray-800 mb-1">Failed to Load Shipments</h2>
-          <p className="text-sm text-gray-500 mb-4">
+          <p className="text-sm text-gray-500 mb-5">
             {error instanceof Error ? error.message : 'An unexpected error occurred.'}
           </p>
           <button
             onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors"
+            className="px-5 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-semibold hover:bg-primary-700 transition-colors"
           >
             Retry
           </button>
@@ -144,26 +146,26 @@ export default function ShipmentListPage() {
   const list = shipments ?? [];
 
   return (
-    <div className="p-4 lg:p-6 space-y-5">
+    <div className="p-5 lg:p-8 space-y-5">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Shipments</h1>
-          <p className="text-sm text-gray-500 mt-0.5">
+          <h1 className="page-header-title">Shipments</h1>
+          <p className="page-header-subtitle">
             {list.length} shipment{list.length !== 1 ? 's' : ''}
             {hasActiveFilters ? ' matching filters' : ' total'}
           </p>
         </div>
         <button
           onClick={() => navigate('/shipments/new')}
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors shadow-sm"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl text-sm font-semibold hover:from-primary-700 hover:to-primary-800 transition-all duration-200 shadow-sm hover:shadow-md"
         >
           <Plus className="w-4 h-4" /> New Shipment
         </button>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+      <div className="bg-white rounded-xl border border-gray-100 shadow-card p-4">
         <div className="flex flex-col md:flex-row gap-3">
           {/* Search */}
           <div className="relative flex-1">
@@ -173,7 +175,7 @@ export default function ShipmentListPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by number, location, cargo..."
-              className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+              className="w-full pl-10 pr-4 py-2.5 bg-gray-50/80 border border-gray-200/80 rounded-xl text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500/15 focus:border-primary-400 focus:bg-white transition-all duration-200"
             />
           </div>
 
@@ -183,7 +185,7 @@ export default function ShipmentListPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="pl-10 pr-8 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 appearance-none bg-white min-w-[160px]"
+              className="pl-10 pr-8 py-2.5 border border-gray-200/80 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/15 focus:border-primary-400 appearance-none bg-gray-50/80 min-w-[160px] transition-all duration-200"
             >
               {STATUS_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>{o.label}</option>
@@ -197,7 +199,7 @@ export default function ShipmentListPage() {
             <select
               value={priorityFilter}
               onChange={(e) => setPriorityFilter(e.target.value)}
-              className="pl-4 pr-8 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 appearance-none bg-white min-w-[150px]"
+              className="pl-4 pr-8 py-2.5 border border-gray-200/80 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/15 focus:border-primary-400 appearance-none bg-gray-50/80 min-w-[150px] transition-all duration-200"
             >
               {PRIORITY_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>{o.label}</option>
@@ -210,7 +212,7 @@ export default function ShipmentListPage() {
           {hasActiveFilters && (
             <button
               onClick={clearFilters}
-              className="inline-flex items-center gap-1.5 px-3 py-2.5 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-2.5 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition-colors"
             >
               <X className="w-3.5 h-3.5" /> Clear
             </button>
@@ -220,8 +222,10 @@ export default function ShipmentListPage() {
 
       {/* Empty state */}
       {list.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-12 text-center">
-          <Package className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+        <div className="bg-white rounded-xl border border-gray-100 shadow-card p-14 text-center">
+          <div className="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Package className="w-7 h-7 text-gray-300" />
+          </div>
           <h2 className="text-lg font-semibold text-gray-700 mb-1">
             {hasActiveFilters ? 'No matching shipments' : 'No shipments yet'}
           </h2>
@@ -233,14 +237,14 @@ export default function ShipmentListPage() {
           {hasActiveFilters ? (
             <button
               onClick={clearFilters}
-              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
+              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-200 transition-colors"
             >
               Clear Filters
             </button>
           ) : (
             <button
               onClick={() => navigate('/shipments/new')}
-              className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors"
+              className="px-5 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-semibold hover:bg-primary-700 transition-colors"
             >
               <Plus className="w-4 h-4 inline mr-1" /> Create Shipment
             </button>
@@ -248,19 +252,19 @@ export default function ShipmentListPage() {
         </div>
       ) : (
         /* Shipment Table */
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-xl border border-gray-100 shadow-card overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="text-left text-xs text-gray-500 uppercase tracking-wider border-b border-gray-100">
-                  <th className="px-5 py-3 font-medium">Shipment</th>
-                  <th className="px-5 py-3 font-medium">Route</th>
-                  <th className="px-5 py-3 font-medium">Cargo</th>
-                  <th className="px-5 py-3 font-medium">Vehicle / Driver</th>
-                  <th className="px-5 py-3 font-medium">Status</th>
-                  <th className="px-5 py-3 font-medium">Priority</th>
-                  <th className="px-5 py-3 font-medium">Deadline</th>
-                  <th className="px-5 py-3 font-medium"></th>
+                <tr className="text-left text-[11px] text-gray-400 uppercase tracking-wider border-b border-gray-100">
+                  <th className="px-5 py-3 font-semibold">Shipment</th>
+                  <th className="px-5 py-3 font-semibold">Route</th>
+                  <th className="px-5 py-3 font-semibold">Cargo</th>
+                  <th className="px-5 py-3 font-semibold">Vehicle / Driver</th>
+                  <th className="px-5 py-3 font-semibold">Status</th>
+                  <th className="px-5 py-3 font-semibold">Priority</th>
+                  <th className="px-5 py-3 font-semibold">Deadline</th>
+                  <th className="px-5 py-3 font-semibold"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
@@ -268,12 +272,12 @@ export default function ShipmentListPage() {
                   <tr
                     key={s.id}
                     onClick={() => navigate(`/shipments/${s.id}`)}
-                    className="hover:bg-gray-50/50 transition-colors cursor-pointer"
+                    className="ff-table-row cursor-pointer group"
                   >
                     {/* Shipment number */}
                     <td className="px-5 py-3.5">
                       <p className="text-sm font-semibold text-gray-900">{s.shipmentNumber}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">
+                      <p className="text-[11px] text-gray-400 mt-0.5">
                         {new Date(s.createdAt).toLocaleDateString('en-IN', {
                           day: 'numeric', month: 'short',
                         })}
@@ -288,7 +292,7 @@ export default function ShipmentListPage() {
                           <p className="text-sm text-gray-700 truncate max-w-[200px]">
                             {s.pickupLocation.split(',')[0]}
                           </p>
-                          <p className="text-xs text-gray-500 truncate max-w-[200px]">
+                          <p className="text-[11px] text-gray-400 truncate max-w-[200px]">
                             → {s.destination.split(',')[0]}
                           </p>
                         </div>
@@ -298,7 +302,7 @@ export default function ShipmentListPage() {
                     {/* Cargo */}
                     <td className="px-5 py-3.5">
                       <p className="text-sm text-gray-700">{s.cargoType}</p>
-                      <p className="text-xs text-gray-500">{s.weight}t · {s.packageCount} pkg</p>
+                      <p className="text-[11px] text-gray-400">{s.weight}t · {s.packageCount} pkg</p>
                     </td>
 
                     {/* Vehicle / Driver */}
@@ -308,17 +312,17 @@ export default function ShipmentListPage() {
                           <Truck className="w-3.5 h-3.5 text-gray-400 mt-0.5 flex-shrink-0" />
                           <div>
                             <p className="text-sm text-gray-700">{s.vehicle.vehicleNumber}</p>
-                            <p className="text-xs text-gray-500">{s.driver?.name ?? 'No driver'}</p>
+                            <p className="text-[11px] text-gray-400">{s.driver?.name ?? 'No driver'}</p>
                           </div>
                         </div>
                       ) : (
-                        <span className="text-xs text-gray-400 italic">Unassigned</span>
+                        <span className="text-[11px] text-gray-400 italic">Unassigned</span>
                       )}
                     </td>
 
                     {/* Status */}
                     <td className="px-5 py-3.5">
-                      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${statusColors[s.status] ?? 'bg-gray-100 text-gray-700'}`}>
+                      <span className={`ff-badge ${statusColors[s.status] ?? 'bg-gray-100 text-gray-600'}`}>
                         {s.status.replace('_', ' ')}
                       </span>
                     </td>
@@ -327,7 +331,7 @@ export default function ShipmentListPage() {
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-1.5">
                         <span className={`w-1.5 h-1.5 rounded-full ${priorityDots[s.priority] ?? 'bg-gray-400'}`} />
-                        <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${priorityColors[s.priority] ?? 'bg-gray-100 text-gray-600'}`}>
+                        <span className={`ff-badge ${priorityColors[s.priority] ?? 'bg-gray-100 text-gray-600'}`}>
                           {s.priority}
                         </span>
                       </div>
@@ -345,7 +349,7 @@ export default function ShipmentListPage() {
 
                     {/* Arrow */}
                     <td className="px-5 py-3.5">
-                      <ArrowRight className="w-4 h-4 text-gray-300" />
+                      <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-gray-500 transition-colors" />
                     </td>
                   </tr>
                 ))}
