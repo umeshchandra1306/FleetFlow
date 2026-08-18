@@ -96,7 +96,7 @@ export async function getAnalytics(req: Request, res: Response) {
 
       dailyVolume.push({
         date: date.toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric' }),
-        shipments: count || Math.floor(Math.random() * 5) + 1, // Fallback for demo
+        shipments: count,
       });
     }
 

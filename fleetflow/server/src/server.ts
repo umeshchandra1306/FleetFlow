@@ -18,7 +18,10 @@ import alertRoutes from './routes/alert.routes';
 import analyticsRoutes from './routes/analytics.routes';
 import notificationRoutes from './routes/notification.routes';
 import searchRoutes from './routes/search.routes';
+import { validateEnvironment } from './config';
+import { stopAllSimulations } from './services/simulator.service';
 
+validateEnvironment();
 export const prisma = new PrismaClient();
 const app = express();
 const server = http.createServer(app);
@@ -75,7 +78,11 @@ server.listen(PORT, () => {
 });
 
 // Graceful shutdown
-process.on('SIGINT', async () => {
+async function shutdown() {
+  stopAllSimulations();
   await prisma.$disconnect();
   process.exit(0);
-});
+}
+
+process.once('SIGINT', shutdown);
+process.once('SIGTERM', shutdown);

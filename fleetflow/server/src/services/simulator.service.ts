@@ -10,6 +10,7 @@ interface SimulationState {
   isPaused: boolean;
   intervalId: NodeJS.Timeout | null;
   speed: number;
+  isMoving: boolean;
 }
 
 const activeSimulations = new Map<string, SimulationState>();
@@ -35,15 +36,18 @@ export function startSimulation(
     isPaused: false,
     intervalId: null,
     speed: 55 + Math.random() * 20,
+    isMoving: false,
   };
 
   const moveVehicle = async () => {
+    if (state.isMoving || activeSimulations.get(vehicleId) !== state) return;
+    state.isMoving = true;
     if (state.isPaused || state.currentIndex >= state.routePoints.length) {
       if (state.currentIndex >= state.routePoints.length) {
-        // Simulation complete
         stopSimulation(vehicleId);
         io.emit('simulation:complete', { vehicleId, shipmentId });
       }
+      state.isMoving = false;
       return;
     }
 
@@ -52,6 +56,7 @@ export function startSimulation(
 
     // Update vehicle position in database
     try {
+      if (activeSimulations.get(vehicleId) !== state) return;
       await prisma.vehicle.update({
         where: { id: vehicleId },
         data: {
@@ -164,6 +169,8 @@ export function startSimulation(
       state.currentIndex++;
     } catch (error) {
       console.error('Simulation error:', error);
+    } finally {
+      state.isMoving = false;
     }
   };
 
@@ -201,6 +208,12 @@ export function stopSimulation(vehicleId: string): boolean {
     return true;
   }
   return false;
+}
+
+export function stopAllSimulations(): void {
+  for (const vehicleId of activeSimulations.keys()) {
+    stopSimulation(vehicleId);
+  }
 }
 
 export function getSimulationState(vehicleId: string): SimulationState | undefined {
