@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { prisma } from '../server';
 import { AuthRequest } from '../middleware/auth';
+import { paramString } from '../utils/helpers';
 
 export async function getNotifications(req: AuthRequest, res: Response) {
   try {
@@ -26,7 +27,7 @@ export async function getNotifications(req: AuthRequest, res: Response) {
 
 export async function markNotificationRead(req: AuthRequest, res: Response) {
   try {
-    const { id } = req.params;
+    const id = paramString(req.params.id);
     await prisma.notification.update({
       where: { id },
       data: { read: true },

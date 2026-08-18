@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
+import { Prisma } from '@prisma/client';
 import { prisma } from '../server';
+import { paramString } from '../utils/helpers';
 
 export async function getDrivers(req: Request, res: Response) {
   try {
@@ -35,8 +37,9 @@ export async function getDrivers(req: Request, res: Response) {
 
 export async function getDriverById(req: Request, res: Response) {
   try {
+    const id = paramString(req.params.id);
     const driver = await prisma.driver.findUnique({
-      where: { id: req.params.id },
+      where: { id },
       include: {
         vehicle: true,
         shipments: {
@@ -85,14 +88,23 @@ export async function createDriver(req: Request, res: Response) {
 
 export async function updateDriver(req: Request, res: Response) {
   try {
-    const driver = await prisma.driver.findUnique({ where: { id: req.params.id } });
+    const id = paramString(req.params.id);
+    const driver = await prisma.driver.findUnique({ where: { id } });
     if (!driver) {
       return res.status(404).json({ success: false, message: 'Driver not found' });
     }
 
+    const { name, phone, licenseNumber, status } = req.body;
+
+    const data: Prisma.DriverUpdateInput = {};
+    if (name !== undefined) data.name = name;
+    if (phone !== undefined) data.phone = phone;
+    if (licenseNumber !== undefined) data.licenseNumber = licenseNumber;
+    if (status !== undefined) data.status = status;
+
     const updated = await prisma.driver.update({
-      where: { id: req.params.id },
-      data: req.body,
+      where: { id },
+      data,
       include: { vehicle: true },
     });
 

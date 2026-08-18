@@ -1,3 +1,9 @@
+/** Normalize Express route params that may be string or string[]. */
+export function paramString(value: string | string[] | undefined): string {
+  if (Array.isArray(value)) return value[0] ?? '';
+  return value ?? '';
+}
+
 /**
  * Haversine distance between two lat/lng points in kilometers
  */

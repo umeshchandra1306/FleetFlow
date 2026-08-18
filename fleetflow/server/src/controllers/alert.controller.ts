@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { prisma } from '../server';
+import { paramString } from '../utils/helpers';
 
 export async function getAlerts(req: Request, res: Response) {
   try {
@@ -27,13 +28,14 @@ export async function getAlerts(req: Request, res: Response) {
 
 export async function resolveAlert(req: Request, res: Response) {
   try {
-    const alert = await prisma.alert.findUnique({ where: { id: req.params.id } });
+    const id = paramString(req.params.id);
+    const alert = await prisma.alert.findUnique({ where: { id } });
     if (!alert) {
       return res.status(404).json({ success: false, message: 'Alert not found' });
     }
 
     const updated = await prisma.alert.update({
-      where: { id: req.params.id },
+      where: { id },
       data: { resolved: true },
     });
 

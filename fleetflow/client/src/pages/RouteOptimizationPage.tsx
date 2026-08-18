@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { shipmentAPI } from '../services/api';
-import { MapContainer, TileLayer, Marker, Polyline, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import RoadRoutePolyline from '../components/RoadRoutePolyline';
 import L from 'leaflet';
 import { Route as RouteIcon, TrendingDown, Clock, ArrowRight, CheckCircle, Loader2 } from 'lucide-react';
 
@@ -11,7 +12,6 @@ export default function RouteOptimizationPage() {
   const navigate = useNavigate();
   const [optimizing, setOptimizing] = useState(false);
   const [optimization, setOptimization] = useState<any>(null);
-  const [routeData, setRouteData] = useState<any>(null);
 
   const { data: shipment } = useQuery({
     queryKey: ['shipment', id],
@@ -24,7 +24,6 @@ export default function RouteOptimizationPage() {
     try {
       const res = await shipmentAPI.optimize(id);
       setOptimization(res.data.data.optimization);
-      setRouteData(res.data.data.route);
     } catch (err) {
       console.error('Optimization failed:', err);
     } finally {
@@ -32,8 +31,12 @@ export default function RouteOptimizationPage() {
     }
   };
 
-  const routePoints = routeData?.routePoints || shipment?.route?.routePoints || [];
-  const positions = routePoints.map((p: any) => [p.latitude, p.longitude] as [number, number]);
+  const mapCenter: [number, number] = shipment
+    ? [
+        (shipment.pickupLatitude + shipment.destinationLatitude) / 2,
+        (shipment.pickupLongitude + shipment.destinationLongitude) / 2,
+      ]
+    : [22.5, 78.5];
 
   const greenIcon = L.divIcon({
     className: '', iconSize: [28, 28], iconAnchor: [14, 14],
@@ -97,7 +100,7 @@ export default function RouteOptimizationPage() {
           </div>
 
           {/* Map */}
-          {positions.length > 0 && (
+          {shipment && (
             <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden mb-6">
               <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
                 <RouteIcon className="w-4 h-4 text-primary-500" />
@@ -105,14 +108,20 @@ export default function RouteOptimizationPage() {
               </div>
               <div className="h-[400px]">
                 <MapContainer
-                  center={positions[Math.floor(positions.length / 2)] || [22.5, 78.5]}
+                  center={mapCenter}
                   zoom={7}
                   style={{ height: '100%', width: '100%' }}
                 >
                   <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; OpenStreetMap' />
-                  {shipment && <Marker position={[shipment.pickupLatitude, shipment.pickupLongitude]} icon={greenIcon}><Popup>Pickup: {shipment.pickupLocation}</Popup></Marker>}
-                  {shipment && <Marker position={[shipment.destinationLatitude, shipment.destinationLongitude]} icon={redIcon}><Popup>Destination: {shipment.destination}</Popup></Marker>}
-                  <Polyline positions={positions} color="#4f46e5" weight={4} opacity={0.8} />
+                  <Marker position={[shipment.pickupLatitude, shipment.pickupLongitude]} icon={greenIcon}><Popup>Pickup: {shipment.pickupLocation}</Popup></Marker>
+                  <Marker position={[shipment.destinationLatitude, shipment.destinationLongitude]} icon={redIcon}><Popup>Destination: {shipment.destination}</Popup></Marker>
+                  <RoadRoutePolyline
+                    start={{ lat: shipment.pickupLatitude, lng: shipment.pickupLongitude }}
+                    end={{ lat: shipment.destinationLatitude, lng: shipment.destinationLongitude }}
+                    color="#4f46e5"
+                    weight={4}
+                    opacity={0.8}
+                  />
                 </MapContainer>
               </div>
             </div>

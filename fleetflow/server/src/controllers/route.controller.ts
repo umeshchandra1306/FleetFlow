@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { prisma } from '../server';
+import { paramString } from '../utils/helpers';
 
 export async function getRoutes(req: Request, res: Response) {
   try {
@@ -24,8 +25,9 @@ export async function getRoutes(req: Request, res: Response) {
 
 export async function getRouteById(req: Request, res: Response) {
   try {
+    const id = paramString(req.params.id);
     const route = await prisma.route.findUnique({
-      where: { id: req.params.id },
+      where: { id },
       include: {
         vehicle: { include: { driver: true } },
         shipment: true,

@@ -1,10 +1,11 @@
 import { Request, Response } from 'express';
+import { Prisma } from '@prisma/client';
 import { prisma } from '../server';
 import { io } from '../server';
 import { scoreVehiclesForShipment } from '../services/allocation.service';
 import { optimizeRoute, rerouteFromPosition } from '../services/optimization.service';
 import { startSimulation, simulateDelay, stopSimulation, pauseSimulation, resumeSimulation } from '../services/simulator.service';
-import { generateShipmentNumber } from '../utils/helpers';
+import { generateShipmentNumber, paramString } from '../utils/helpers';
 
 export async function getShipments(req: Request, res: Response) {
   try {
@@ -40,8 +41,9 @@ export async function getShipments(req: Request, res: Response) {
 
 export async function getShipmentById(req: Request, res: Response) {
   try {
+    const id = paramString(req.params.id);
     const shipment = await prisma.shipment.findUnique({
-      where: { id: req.params.id },
+      where: { id },
       include: {
         vehicle: { include: { driver: true } },
         driver: true,
@@ -151,7 +153,8 @@ export async function createShipment(req: Request, res: Response) {
 
 export async function updateShipment(req: Request, res: Response) {
   try {
-    const shipment = await prisma.shipment.findUnique({ where: { id: req.params.id } });
+    const id = paramString(req.params.id);
+    const shipment = await prisma.shipment.findUnique({ where: { id } });
     if (!shipment) {
       return res.status(404).json({ success: false, message: 'Shipment not found' });
     }
@@ -160,9 +163,30 @@ export async function updateShipment(req: Request, res: Response) {
       return res.status(400).json({ success: false, message: 'Cannot update a delivered shipment' });
     }
 
+    const {
+      pickupLocation, destination,
+      pickupLatitude, pickupLongitude,
+      destinationLatitude, destinationLongitude,
+      cargoType, weight, packageCount,
+      priority, deadline,
+    } = req.body;
+
+    const data: Prisma.ShipmentUpdateInput = {};
+    if (pickupLocation !== undefined) data.pickupLocation = pickupLocation;
+    if (destination !== undefined) data.destination = destination;
+    if (pickupLatitude !== undefined) data.pickupLatitude = parseFloat(pickupLatitude);
+    if (pickupLongitude !== undefined) data.pickupLongitude = parseFloat(pickupLongitude);
+    if (destinationLatitude !== undefined) data.destinationLatitude = parseFloat(destinationLatitude);
+    if (destinationLongitude !== undefined) data.destinationLongitude = parseFloat(destinationLongitude);
+    if (cargoType !== undefined) data.cargoType = cargoType;
+    if (weight !== undefined) data.weight = parseFloat(weight);
+    if (packageCount !== undefined) data.packageCount = parseInt(packageCount, 10);
+    if (priority !== undefined) data.priority = priority;
+    if (deadline !== undefined) data.deadline = new Date(deadline);
+
     const updated = await prisma.shipment.update({
-      where: { id: req.params.id },
-      data: req.body,
+      where: { id },
+      data,
       include: { vehicle: true, driver: true, route: true },
     });
 
@@ -174,7 +198,11 @@ export async function updateShipment(req: Request, res: Response) {
 
 export async function allocateVehicle(req: Request, res: Response) {
   try {
-    const shipment = await prisma.shipment.findUnique({ where: { id: req.params.id } });
+    const id = paramString(req.params.id);
+    const shipment = await prisma.shipment.findUnique({
+      where: { id },
+      include: { vehicle: true, route: true },
+    });
     if (!shipment) {
       return res.status(404).json({ success: false, message: 'Shipment not found' });
     }
@@ -205,9 +233,10 @@ export async function allocateVehicle(req: Request, res: Response) {
 
 export async function optimizeShipmentRoute(req: Request, res: Response) {
   try {
+    const id = paramString(req.params.id);
     const shipment = await prisma.shipment.findUnique({
-      where: { id: req.params.id },
-      include: { vehicle: true },
+      where: { id },
+      include: { vehicle: true, route: true },
     });
 
     if (!shipment) {
@@ -235,7 +264,7 @@ export async function optimizeShipmentRoute(req: Request, res: Response) {
           optimizedDistance: result.optimizedDistance,
           optimizedDuration: result.optimizedDuration,
           eta: result.eta,
-          routePoints: result.routePoints,
+          routePoints: result.routePoints as unknown as Prisma.InputJsonValue,
           status: 'PLANNED',
         },
       });
@@ -248,7 +277,7 @@ export async function optimizeShipmentRoute(req: Request, res: Response) {
           optimizedDistance: result.optimizedDistance,
           optimizedDuration: result.optimizedDuration,
           eta: result.eta,
-          routePoints: result.routePoints,
+          routePoints: result.routePoints as unknown as Prisma.InputJsonValue,
           status: 'PLANNED',
         },
       });
@@ -281,7 +310,11 @@ export async function optimizeShipmentRoute(req: Request, res: Response) {
 export async function assignVehicle(req: Request, res: Response) {
   try {
     const { vehicleId, driverId } = req.body;
-    const shipment = await prisma.shipment.findUnique({ where: { id: req.params.id } });
+    const id = paramString(req.params.id);
+    const shipment = await prisma.shipment.findUnique({
+      where: { id },
+      include: { vehicle: true, route: true },
+    });
 
     if (!shipment) {
       return res.status(404).json({ success: false, message: 'Shipment not found' });
@@ -362,8 +395,9 @@ export async function assignVehicle(req: Request, res: Response) {
 
 export async function startTrip(req: Request, res: Response) {
   try {
+    const id = paramString(req.params.id);
     const shipment = await prisma.shipment.findUnique({
-      where: { id: req.params.id },
+      where: { id },
       include: { vehicle: true, driver: true, route: true },
     });
 
@@ -422,8 +456,9 @@ export async function startTrip(req: Request, res: Response) {
 
 export async function deliverShipment(req: Request, res: Response) {
   try {
+    const id = paramString(req.params.id);
     const shipment = await prisma.shipment.findUnique({
-      where: { id: req.params.id },
+      where: { id },
       include: { vehicle: true, driver: true, route: true },
     });
 
@@ -502,14 +537,18 @@ export async function deliverShipment(req: Request, res: Response) {
 export async function updateShipmentStatus(req: Request, res: Response) {
   try {
     const { status } = req.body;
-    const shipment = await prisma.shipment.findUnique({ where: { id: req.params.id } });
+    const id = paramString(req.params.id);
+    const shipment = await prisma.shipment.findUnique({
+      where: { id },
+      include: { vehicle: true, route: true },
+    });
 
     if (!shipment) {
       return res.status(404).json({ success: false, message: 'Shipment not found' });
     }
 
     const updated = await prisma.shipment.update({
-      where: { id: req.params.id },
+      where: { id },
       data: { status },
       include: { vehicle: true, driver: true, route: true },
     });
@@ -524,8 +563,9 @@ export async function updateShipmentStatus(req: Request, res: Response) {
 
 export async function simulateShipmentDelay(req: Request, res: Response) {
   try {
+    const id = paramString(req.params.id);
     const shipment = await prisma.shipment.findUnique({
-      where: { id: req.params.id },
+      where: { id },
       include: { vehicle: true, route: true },
     });
 
@@ -577,7 +617,7 @@ export async function simulateShipmentDelay(req: Request, res: Response) {
           optimizedDistance: reroute.optimizedDistance,
           optimizedDuration: reroute.optimizedDuration,
           eta: reroute.eta,
-          routePoints: reroute.routePoints,
+          routePoints: reroute.routePoints as unknown as Prisma.InputJsonValue,
           status: 'DEVIATED',
         },
       });
@@ -622,7 +662,7 @@ export async function simulateShipmentDelay(req: Request, res: Response) {
 
 export async function getDriverShipment(req: Request, res: Response) {
   try {
-    const { driverId } = req.params;
+    const driverId = paramString(req.params.driverId);
 
     const shipment = await prisma.shipment.findFirst({
       where: {

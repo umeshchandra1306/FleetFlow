@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { prisma } from '../server';
 import { io } from '../server';
 import { startSimulation, stopSimulation } from '../services/simulator.service';
+import { paramString } from '../utils/helpers';
 
 export async function startTracking(req: Request, res: Response) {
   try {
@@ -52,7 +53,7 @@ export async function stopTracking(req: Request, res: Response) {
 
 export async function getTracking(req: Request, res: Response) {
   try {
-    const { vehicleId } = req.params;
+    const vehicleId = paramString(req.params.vehicleId);
 
     const events = await prisma.trackingEvent.findMany({
       where: { vehicleId },

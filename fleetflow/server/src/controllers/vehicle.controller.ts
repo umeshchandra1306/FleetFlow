@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
+import { Prisma } from '@prisma/client';
 import { prisma } from '../server';
+import { paramString } from '../utils/helpers';
 
 export async function getVehicles(req: Request, res: Response) {
   try {
@@ -35,8 +37,9 @@ export async function getVehicles(req: Request, res: Response) {
 
 export async function getVehicleById(req: Request, res: Response) {
   try {
+    const id = paramString(req.params.id);
     const vehicle = await prisma.vehicle.findUnique({
-      where: { id: req.params.id },
+      where: { id },
       include: {
         driver: true,
         shipments: {
@@ -111,15 +114,35 @@ export async function createVehicle(req: Request, res: Response) {
 
 export async function updateVehicle(req: Request, res: Response) {
   try {
-    const { id } = req.params;
+    const id = paramString(req.params.id);
     const vehicle = await prisma.vehicle.findUnique({ where: { id } });
     if (!vehicle) {
       return res.status(404).json({ success: false, message: 'Vehicle not found' });
     }
 
+    const {
+      vehicleNumber, vehicleType, capacity, fuelType,
+      latitude, longitude, status, currentLoad, driverId,
+    } = req.body;
+
+    const data: Prisma.VehicleUpdateInput = {};
+    if (vehicleNumber !== undefined) data.vehicleNumber = vehicleNumber;
+    if (vehicleType !== undefined) data.vehicleType = vehicleType;
+    if (capacity !== undefined) data.capacity = parseFloat(capacity);
+    if (fuelType !== undefined) data.fuelType = fuelType;
+    if (latitude !== undefined) data.latitude = parseFloat(latitude);
+    if (longitude !== undefined) data.longitude = parseFloat(longitude);
+    if (status !== undefined) data.status = status;
+    if (currentLoad !== undefined) data.currentLoad = parseFloat(currentLoad);
+    if (driverId !== undefined) {
+      data.driver = driverId
+        ? { connect: { id: driverId } }
+        : { disconnect: true };
+    }
+
     const updated = await prisma.vehicle.update({
       where: { id },
-      data: req.body,
+      data,
       include: { driver: true },
     });
 

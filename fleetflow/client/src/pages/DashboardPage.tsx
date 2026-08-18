@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { dashboardAPI } from '../services/api';
 import { useVehicleTracking, useShipmentStatus } from '../hooks/useSocket';
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import RoadRoutePolyline from '../components/RoadRoutePolyline';
 import L from 'leaflet';
 import {
   Truck, Package, AlertTriangle, TrendingUp, Clock, CheckCircle2,
@@ -298,10 +299,16 @@ export default function DashboardPage() {
                   </Popup>
                 </Marker>
               ))}
-              {activeShipments.filter(s => s.route?.routePoints).map(s => {
-                const points = (s.route!.routePoints as any[]).map(p => [p.latitude, p.longitude] as [number, number]);
-                return <Polyline key={`route-${s.id}`} positions={points} color={s.status === 'DELAYED' ? '#ef4444' : '#4f46e5'} weight={3.5} opacity={0.8} />;
-              })}
+              {activeShipments.map(s => (
+                <RoadRoutePolyline
+                  key={`route-${s.id}`}
+                  start={{ lat: s.pickupLatitude, lng: s.pickupLongitude }}
+                  end={{ lat: s.destinationLatitude, lng: s.destinationLongitude }}
+                  color={s.status === 'DELAYED' ? '#ef4444' : '#4f46e5'}
+                  weight={3.5}
+                  opacity={0.8}
+                />
+              ))}
             </MapContainer>
           </div>
         </div>
