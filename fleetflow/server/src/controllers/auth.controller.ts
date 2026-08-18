@@ -3,7 +3,6 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../server';
 import { AuthRequest } from '../middleware/auth';
-import { getJwtSecret } from '../config';
 
 export async function register(req: Request, res: Response) {
   try {
@@ -30,7 +29,7 @@ export async function register(req: Request, res: Response) {
 
     const token = jwt.sign(
       { id: user.id, email: user.email, name: user.name, role: user.role },
-      getJwtSecret(),
+      process.env.JWT_SECRET || 'secret',
       { expiresIn: '24h' }
     );
 
@@ -70,7 +69,7 @@ export async function login(req: Request, res: Response) {
 
     const token = jwt.sign(
       { id: user.id, email: user.email, name: user.name, role: user.role },
-      getJwtSecret(),
+      process.env.JWT_SECRET || 'secret',
       { expiresIn: '24h' }
     );
 

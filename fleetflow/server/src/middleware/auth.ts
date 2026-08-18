@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../server';
-import { getJwtSecret } from '../config';
 
 export interface AuthRequest extends Request {
   user?: {
@@ -20,12 +19,12 @@ export function authenticate(req: AuthRequest, res: Response, next: NextFunction
 
   const token = authHeader.split(' ')[1];
   try {
-    const decoded = jwt.verify(token, getJwtSecret()) as jwt.JwtPayload;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret') as any;
     req.user = {
-      id: String(decoded.id),
-      email: String(decoded.email),
-      name: String(decoded.name),
-      role: String(decoded.role),
+      id: decoded.id,
+      email: decoded.email,
+      name: decoded.name,
+      role: decoded.role,
     };
     next();
   } catch (err) {
